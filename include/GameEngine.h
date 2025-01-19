@@ -20,6 +20,8 @@ private:
 	SDL_Renderer*	renderer;
 	bool			isRunning;
 
+	void HandleEvents();
+	void Update();
 	void Render();
 };
 #endif // GAMEENGINE_H

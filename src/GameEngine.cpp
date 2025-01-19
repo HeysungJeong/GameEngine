@@ -43,10 +43,8 @@ void GameEngine::Run()
 {
 	while (isRunning)
 	{
-		SDL_Event event;
-		while (SDL_PollEvent(&event))
-			if (event.type == SDL_QUIT)
-				isRunning = false;
+		HandleEvents();
+		Update();
 		Render();
 	}
 }
@@ -64,6 +62,33 @@ void GameEngine::Shutdown()
 		window = nullptr;
 	}
 	SDL_Quit();
+}
+
+void GameEngine::HandleEvents()
+{
+	SDL_Event event;
+	while (SDL_PollEvent(&event))
+	{
+		//창 닫기 버튼을 누루면 발생하는 이벤트
+		if (event.type == SDL_QUIT)
+			isRunning = false;
+
+		if (event.type == SDL_KEYDOWN)
+		{
+			switch (event.key.keysym.sym)
+			{
+			case SDLK_ESCAPE:
+				isRunning = false;
+				break;
+			default:
+				break;
+			}
+		}
+	}
+}
+
+void GameEngine::Update()
+{
 }
 
 void GameEngine::Render()
