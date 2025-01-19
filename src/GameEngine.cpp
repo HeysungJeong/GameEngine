@@ -47,13 +47,7 @@ void GameEngine::Run()
 		while (SDL_PollEvent(&event))
 			if (event.type == SDL_QUIT)
 				isRunning = false;
-
-		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-		SDL_RenderClear(renderer);
-
-		// 여기에 렌더링 코드를 추가합니다
-
-		SDL_RenderPresent(renderer);
+		Render();
 	}
 }
 
@@ -70,4 +64,19 @@ void GameEngine::Shutdown()
 		window = nullptr;
 	}
 	SDL_Quit();
+}
+
+void GameEngine::Render()
+{
+	//검정색으로 칠함
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+	SDL_RenderClear(renderer);
+
+	//빨간색 직사각형 그리기
+	SDL_Rect rect = { 200,150,400,300 };
+	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+	SDL_RenderFillRect(renderer, &rect);
+
+	//랜더링 결과를 화면에 출력
+	SDL_RenderPresent(renderer);
 }
