@@ -19,6 +19,12 @@ private:
 	SDL_Window*		window;
 	SDL_Renderer*	renderer;
 	bool			isRunning;
+	Uint32			frameStart;
+	int				frameTime;
+
+	Uint32			fpsTimer = 0;
+	Uint32			frameCount = 0;
+	float			currentFPS = 0.0f;
 
 	void HandleEvents();
 	void Update();

@@ -1,12 +1,15 @@
 #include "GameEngine.h"
 #include <iostream>
 
+#define FPS 60
+const int FRAME_DELAY = 1000 / FPS;		//16
+
 GameEngine::GameEngine()
 	: window(nullptr)
 	, renderer(nullptr)
 	, isRunning(false)
-{
-}
+	, frameStart(0)
+	, frameTime(0) { }
 
 GameEngine::~GameEngine()
 {
@@ -43,9 +46,32 @@ void GameEngine::Run()
 {
 	while (isRunning)
 	{
+		frameStart = SDL_GetTicks();
+
 		HandleEvents();
 		Update();
 		Render();
+
+		frameTime = SDL_GetTicks() - frameStart;
+		if (FRAME_DELAY > frameTime)
+		{
+			SDL_Delay(FRAME_DELAY - frameTime);
+		}
+
+		// FPS 계산 로직
+		frameCount++; // 렌더링된 프레임 수 증가
+		fpsTimer += frameTime; // 누적된 시간 증가
+
+		if (fpsTimer >= 1000) { // 매 초마다 FPS 계산
+			currentFPS = frameCount / (fpsTimer / 1000.0f); // 초 단위로 나눠 FPS 계산
+			fpsTimer = 0;     // 타이머 초기화
+			frameCount = 0;   // 프레임 카운트 초기화
+
+			std::cout << "현재 FPS: " << currentFPS << std::endl; // 콘솔에 출력
+
+			// 화면에 텍스트로 표시하려면 SDL_ttf 라이브러리를 사용해야 함.
+			// 예: TTF_RenderText_Solid() 함수 사용 가능.
+		}
 	}
 }
 
