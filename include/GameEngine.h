@@ -8,6 +8,7 @@
 
 #include <SDL.h>
 #include <SDL_image.h>
+#include "Animation.h"
 
 class GameEngine {
 public:
@@ -21,21 +22,15 @@ private:
 	SDL_Window*		window;
 	SDL_Renderer*	renderer;
 	SDL_Texture*	texture;
+	Animation*		animation;
 	bool			isRunning;
 	Uint32			frameStart;
 	int				frameTime;
-
-	int				spriteWidth;
-	int				spriteHeight;
-	int				currentFrame;
-	int				totalFrames;
-	Uint32			animationDelay;
-	Uint32			lastFrameTime;
 
 	void HandleEvents();
 	void Update();
 	void Render();
 	bool LoadTexture(const char* filePath);
-	void UpdateAnimation();
+	//void UpdateAnimation();
 };
 #endif // GAMEENGINE_H

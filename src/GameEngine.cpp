@@ -5,10 +5,8 @@
 const int FRAME_DELAY = 1000 / FPS;		//16
 
 GameEngine::GameEngine()
-	: window(nullptr), renderer(nullptr), isRunning(false)
-	, frameStart(0), frameTime(0), spriteWidth(128)
-	, spriteHeight(160), currentFrame(0), totalFrames(4)
-	, animationDelay(200), lastFrameTime(0){ }
+	: window(nullptr), renderer(nullptr), texture(nullptr)
+	, isRunning(false), frameStart(0), frameTime(0) { }
 
 GameEngine::~GameEngine()
 {
@@ -47,6 +45,14 @@ bool GameEngine::Initialize(const char* title, int width, int height)
 		return false;
 	}
 
+	// 애니메이션 생성
+	animation = new Animation(128, 160, 5, 200);
+	// 프레임 너비, 높이, 총 프레임 수, 프레임 지속 시간 (밀리초)
+	for (int i = 0; i < 5; ++i)
+	{
+		animation->AddFrame(i * 128, 0);
+	}
+
 	isRunning = true;
 	return true;
 }
@@ -71,6 +77,16 @@ void GameEngine::Run()
 
 void GameEngine::Shutdown()
 {
+	if (animation)
+	{
+		delete animation;
+		animation = nullptr;
+	}
+	if (texture)
+	{
+		SDL_DestroyTexture(texture);
+		texture = nullptr;
+	}
 	if (renderer)
 	{
 		SDL_DestroyRenderer(renderer);
@@ -81,6 +97,7 @@ void GameEngine::Shutdown()
 		SDL_DestroyWindow(window);
 		window = nullptr;
 	}
+	IMG_Quit();
 	SDL_Quit();
 }
 
@@ -100,6 +117,7 @@ void GameEngine::HandleEvents()
 			case SDLK_ESCAPE:
 				isRunning = false;
 				break;
+				//추가 입력처리 할 것
 			default:
 				break;
 			}
@@ -109,7 +127,7 @@ void GameEngine::HandleEvents()
 
 void GameEngine::Update()
 {
-	UpdateAnimation();
+	animation->Update();
 }
 
 void GameEngine::Render()
@@ -119,9 +137,7 @@ void GameEngine::Render()
 	SDL_RenderClear(renderer);
 
 	// 텍스처 렌더링
-	SDL_Rect srcRect = { currentFrame * spriteWidth, 0, spriteWidth, spriteHeight };
-	SDL_Rect destRect = { 200,150, spriteWidth, spriteHeight };
-	SDL_RenderCopy(renderer, texture, &srcRect, &destRect);
+	animation->Render(renderer, texture, 200, 150);
 
 	//랜더링 결과를 화면에 출력
 	SDL_RenderPresent(renderer);
@@ -143,18 +159,4 @@ bool GameEngine::LoadTexture(const char* filePath)
 		return false;
 	}
 	return true;
-}
-
-void GameEngine::UpdateAnimation()
-{
-	Uint32 currentTime = SDL_GetTicks();
-	if (currentTime > lastFrameTime + animationDelay)
-	{
-		currentFrame++;
-		if (currentFrame >= totalFrames)
-		{
-			currentFrame = 0;
-		}
-		lastFrameTime = currentTime;
-	}
 }
