@@ -38,6 +38,16 @@ bool GameEngine::Initialize(const char* title, int width, int height)
 		std::cerr << "SDL_CreateRenderer Error: " << SDL_GetError() << std::endl;
 		return false;
 	}
+
+	if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
+		std::cerr << "IMG_Init Error: " << IMG_GetError() << std::endl;
+		return false;
+	}
+
+	if (!LoadTexture("img.png")) {
+		return false;
+	}
+
 	isRunning = true;
 	return true;
 }
@@ -56,21 +66,6 @@ void GameEngine::Run()
 		if (FRAME_DELAY > frameTime)
 		{
 			SDL_Delay(FRAME_DELAY - frameTime);
-		}
-
-		// FPS 계산 로직
-		frameCount++; // 렌더링된 프레임 수 증가
-		fpsTimer += frameTime; // 누적된 시간 증가
-
-		if (fpsTimer >= 1000) { // 매 초마다 FPS 계산
-			currentFPS = frameCount / (fpsTimer / 1000.0f); // 초 단위로 나눠 FPS 계산
-			fpsTimer = 0;     // 타이머 초기화
-			frameCount = 0;   // 프레임 카운트 초기화
-
-			std::cout << "현재 FPS: " << currentFPS << std::endl; // 콘솔에 출력
-
-			// 화면에 텍스트로 표시하려면 SDL_ttf 라이브러리를 사용해야 함.
-			// 예: TTF_RenderText_Solid() 함수 사용 가능.
 		}
 	}
 }
@@ -123,11 +118,28 @@ void GameEngine::Render()
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 	SDL_RenderClear(renderer);
 
-	//빨간색 직사각형 그리기
-	SDL_Rect rect = { 200,150,400,300 };
-	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-	SDL_RenderFillRect(renderer, &rect);
+	// 텍스처 렌더링
+	SDL_Rect destRect = { 200, 150, 400, 300 };
+	SDL_RenderCopy(renderer, texture, nullptr, &destRect);
 
 	//랜더링 결과를 화면에 출력
 	SDL_RenderPresent(renderer);
+}
+
+bool GameEngine::LoadTexture(const char* filePath)
+{
+	SDL_Surface* tempSurface = IMG_Load(filePath);
+	if (tempSurface == nullptr) {
+		std::cerr << "IMG_Load Error: " << IMG_GetError() << std::endl;
+		return false;
+	}
+
+	texture = SDL_CreateTextureFromSurface(renderer, tempSurface);
+	SDL_FreeSurface(tempSurface);
+
+	if (texture == nullptr) {
+		std::cerr << "SDL_CreateTextureFromSurface Error: " << SDL_GetError() << std::endl;
+		return false;
+	}
+	return true;
 }

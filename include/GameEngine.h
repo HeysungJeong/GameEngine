@@ -7,6 +7,8 @@
 //뷰포트 변환(Viewport Transformation) : 투영된 좌표를 실제 화면 좌표로 변환합니다.
 
 #include <SDL.h>
+#include <SDL_image.h>
+
 class GameEngine {
 public:
 	GameEngine();
@@ -18,16 +20,14 @@ public:
 private:
 	SDL_Window*		window;
 	SDL_Renderer*	renderer;
+	SDL_Texture*	texture;
 	bool			isRunning;
 	Uint32			frameStart;
 	int				frameTime;
 
-	Uint32			fpsTimer = 0;
-	Uint32			frameCount = 0;
-	float			currentFPS = 0.0f;
-
 	void HandleEvents();
 	void Update();
 	void Render();
+	bool LoadTexture(const char* filePath);
 };
 #endif // GAMEENGINE_H
