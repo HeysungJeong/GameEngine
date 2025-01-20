@@ -5,11 +5,10 @@
 const int FRAME_DELAY = 1000 / FPS;		//16
 
 GameEngine::GameEngine()
-	: window(nullptr)
-	, renderer(nullptr)
-	, isRunning(false)
-	, frameStart(0)
-	, frameTime(0) { }
+	: window(nullptr), renderer(nullptr), isRunning(false)
+	, frameStart(0), frameTime(0), spriteWidth(128)
+	, spriteHeight(160), currentFrame(0), totalFrames(4)
+	, animationDelay(200), lastFrameTime(0){ }
 
 GameEngine::~GameEngine()
 {
@@ -44,7 +43,7 @@ bool GameEngine::Initialize(const char* title, int width, int height)
 		return false;
 	}
 
-	if (!LoadTexture("img.png")) {
+	if (!LoadTexture("../../../resource/StupidRat.png")) {
 		return false;
 	}
 
@@ -110,6 +109,7 @@ void GameEngine::HandleEvents()
 
 void GameEngine::Update()
 {
+	UpdateAnimation();
 }
 
 void GameEngine::Render()
@@ -119,8 +119,9 @@ void GameEngine::Render()
 	SDL_RenderClear(renderer);
 
 	// 텍스처 렌더링
-	SDL_Rect destRect = { 200, 150, 400, 300 };
-	SDL_RenderCopy(renderer, texture, nullptr, &destRect);
+	SDL_Rect srcRect = { currentFrame * spriteWidth, 0, spriteWidth, spriteHeight };
+	SDL_Rect destRect = { 200,150, spriteWidth, spriteHeight };
+	SDL_RenderCopy(renderer, texture, &srcRect, &destRect);
 
 	//랜더링 결과를 화면에 출력
 	SDL_RenderPresent(renderer);
@@ -142,4 +143,18 @@ bool GameEngine::LoadTexture(const char* filePath)
 		return false;
 	}
 	return true;
+}
+
+void GameEngine::UpdateAnimation()
+{
+	Uint32 currentTime = SDL_GetTicks();
+	if (currentTime > lastFrameTime + animationDelay)
+	{
+		currentFrame++;
+		if (currentFrame >= totalFrames)
+		{
+			currentFrame = 0;
+		}
+		lastFrameTime = currentTime;
+	}
 }

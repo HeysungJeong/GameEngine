@@ -25,9 +25,17 @@ private:
 	Uint32			frameStart;
 	int				frameTime;
 
+	int				spriteWidth;
+	int				spriteHeight;
+	int				currentFrame;
+	int				totalFrames;
+	Uint32			animationDelay;
+	Uint32			lastFrameTime;
+
 	void HandleEvents();
 	void Update();
 	void Render();
 	bool LoadTexture(const char* filePath);
+	void UpdateAnimation();
 };
 #endif // GAMEENGINE_H
