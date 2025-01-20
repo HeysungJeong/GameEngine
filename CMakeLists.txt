@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 include_directories(include)
 
 set(SDL2_DIR "C:/SDL2/cmake")
-#SDL2 라이브러리 설정
+#SDL2 라이브러리 설정 https://eachan.tistory.com/182
 find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIR})                    #Include include directory(headers)
 
