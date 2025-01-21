@@ -16,10 +16,13 @@ find_package(SDL2 REQUIRED)
 # SDL2_image 라이브러리 설정
 find_package(SDL2_image REQUIRED)
 
+# SDL2_mixer 라이브러리 설정
+find_package(SDL2_mixer REQUIRED)
+
 # 소스 파일 설정
 file(GLOB SOURCES "src/*.cpp")
 
 # 실행 파일 생성
 add_executable(GameEngine ${SOURCES})
 
-target_link_libraries(GameEngine ${SDL2_LIBRARIES} SDL2_image::SDL2_image)
+target_link_libraries(GameEngine ${SDL2_LIBRARIES} SDL2_image::SDL2_image SDL2_mixer::SDL2_mixer)

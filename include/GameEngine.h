@@ -11,6 +11,7 @@
 #include "Animation.h"
 #include "TileMap.h"
 #include "Physics.h"
+#include "AudioManager.h"
 
 class GameEngine {
 public:
@@ -23,6 +24,7 @@ public:
 private:
 	SDL_Window*		window;
 	SDL_Renderer*	renderer;
+	AudioManager*	audioManager;
 	SDL_Rect		player;
 	SDL_Rect		obstacle;
 	//SDL_Texture*	texture;
