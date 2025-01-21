@@ -5,7 +5,7 @@
 const int FRAME_DELAY = 1000 / FPS;		//16
 
 GameEngine::GameEngine()
-	: window(nullptr), renderer(nullptr), texture(nullptr)
+	: window(nullptr), renderer(nullptr), tileMap(nullptr)
 	, isRunning(false), frameStart(0), frameTime(0) { }
 
 GameEngine::~GameEngine()
@@ -41,17 +41,30 @@ bool GameEngine::Initialize(const char* title, int width, int height)
 		return false;
 	}
 
-	if (!LoadTexture("../../../resource/StupidRat.png")) {
+	tileMap = new TileMap(32, 32, 26, 20);
+	if (!tileMap->LoadTileSet("../../../resource/full_tilemap.png", renderer))
+	{
 		return false;
 	}
 
-	// 애니메이션 생성
-	animation = new Animation(128, 160, 5, 200);
-	// 프레임 너비, 높이, 총 프레임 수, 프레임 지속 시간 (밀리초)
-	for (int i = 0; i < 5; ++i)
+	//타일맵 설정
+	for (int y = 0; y < 20; ++y)
 	{
-		animation->AddFrame(i * 128, 0);
+		for (int x = 0; x < 26; ++x)
+		{
+			tileMap->SetTile(x, y, (x + y) % 4); //타일 id 설정
+		}
 	}
+	// 애니메이션 생성
+	/*if (!LoadTexture("../../../resource/StupidRat.png")) {
+		return false;
+	}*/
+	//animation = new Animation(128, 160, 5, 200);
+	// 프레임 너비, 높이, 총 프레임 수, 프레임 지속 시간 (밀리초)
+	//for (int i = 0; i < 5; ++i)
+	//{
+	//	animation->AddFrame(i * 128, 0);
+	//}
 
 	isRunning = true;
 	return true;
@@ -77,15 +90,20 @@ void GameEngine::Run()
 
 void GameEngine::Shutdown()
 {
-	if (animation)
+	//if (animation)
+	//{
+	//	delete animation;
+	//	animation = nullptr;
+	//}
+	//if (texture)
+	//{
+	//	SDL_DestroyTexture(texture);
+	//	texture = nullptr;
+	//}
+	if (tileMap)
 	{
-		delete animation;
-		animation = nullptr;
-	}
-	if (texture)
-	{
-		SDL_DestroyTexture(texture);
-		texture = nullptr;
+		delete tileMap;
+		tileMap = nullptr;
 	}
 	if (renderer)
 	{
@@ -127,7 +145,7 @@ void GameEngine::HandleEvents()
 
 void GameEngine::Update()
 {
-	animation->Update();
+	//animation->Update();
 }
 
 void GameEngine::Render()
@@ -137,26 +155,27 @@ void GameEngine::Render()
 	SDL_RenderClear(renderer);
 
 	// 텍스처 렌더링
-	animation->Render(renderer, texture, 200, 150);
-
+	//animation->Render(renderer, texture, 200, 150);
+	//타일 렌더링
+	tileMap->Render(renderer);
 	//랜더링 결과를 화면에 출력
 	SDL_RenderPresent(renderer);
 }
 
-bool GameEngine::LoadTexture(const char* filePath)
-{
-	SDL_Surface* tempSurface = IMG_Load(filePath);
-	if (tempSurface == nullptr) {
-		std::cerr << "IMG_Load Error: " << IMG_GetError() << std::endl;
-		return false;
-	}
-
-	texture = SDL_CreateTextureFromSurface(renderer, tempSurface);
-	SDL_FreeSurface(tempSurface);
-
-	if (texture == nullptr) {
-		std::cerr << "SDL_CreateTextureFromSurface Error: " << SDL_GetError() << std::endl;
-		return false;
-	}
-	return true;
-}
+//bool GameEngine::LoadTexture(const char* filePath)
+//{
+//	SDL_Surface* tempSurface = IMG_Load(filePath);
+//	if (tempSurface == nullptr) {
+//		std::cerr << "IMG_Load Error: " << IMG_GetError() << std::endl;
+//		return false;
+//	}
+//
+//	texture = SDL_CreateTextureFromSurface(renderer, tempSurface);
+//	SDL_FreeSurface(tempSurface);
+//
+//	if (texture == nullptr) {
+//		std::cerr << "SDL_CreateTextureFromSurface Error: " << SDL_GetError() << std::endl;
+//		return false;
+//	}
+//	return true;
+//}

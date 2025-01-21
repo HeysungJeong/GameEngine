@@ -22,8 +22,9 @@ public:
 private:
 	SDL_Window*		window;
 	SDL_Renderer*	renderer;
-	SDL_Texture*	texture;
-	Animation*		animation;
+	//SDL_Texture*	texture;
+	//Animation*	animation;
+	TileMap*		tileMap;
 	bool			isRunning;
 	Uint32			frameStart;
 	int				frameTime;
@@ -31,7 +32,7 @@ private:
 	void HandleEvents();
 	void Update();
 	void Render();
-	bool LoadTexture(const char* filePath);
+	//bool LoadTexture(const char* filePath);
 	//void UpdateAnimation();
 };
 #endif // GAMEENGINE_H

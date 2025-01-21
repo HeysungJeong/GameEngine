@@ -43,18 +43,23 @@ void TileMap::SetTile(int x, int y, int tileID)
 
 void TileMap::Render(SDL_Renderer* renderer)
 {
+	static int temp = 0;
+	temp %= 5;
 	int w = 0, h = 0;
 	if (SDL_QueryTexture(tileSet, NULL, NULL, &w, &h))
 	{
 		std::cerr << "Failed to query texture: " << SDL_GetError() << std::endl;
 	}
 
+	SDL_Delay(500);
+
 	for (int y = 0; y < mapHeight; ++y) {
 		for (int x = 0; x < mapWidth; ++x) {
 			int tileID = map[y][x];
-			SDL_Rect srcRect = { (tileID % (w / tileWidth)) * tileWidth, (tileID / (w / tileWidth)) * tileHeight, tileWidth, tileHeight };
+			SDL_Rect srcRect = { (tileID % (w / tileWidth)) * tileWidth, /*(tileID / (w / tileWidth))*/temp * tileHeight, tileWidth, tileHeight };
 			SDL_Rect destRect = { x * tileWidth, y * tileHeight, tileWidth, tileHeight };
 			SDL_RenderCopy(renderer, tileSet, &srcRect, &destRect);
 		}
 	}
+	temp++;
 }
