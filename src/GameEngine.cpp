@@ -5,8 +5,12 @@
 const int FRAME_DELAY = 1000 / FPS;		//16
 
 GameEngine::GameEngine()
-	: window(nullptr), renderer(nullptr), tileMap(nullptr)
-	, isRunning(false), frameStart(0), frameTime(0) { }
+	: window(nullptr), renderer(nullptr), isRunning(false)
+	, frameStart(0), frameTime(0) 
+{
+	player = { 100, 100, 50, 50 };
+	obstacle = { 300, 100, 50, 50 };
+}
 
 GameEngine::~GameEngine()
 {
@@ -36,25 +40,25 @@ bool GameEngine::Initialize(const char* title, int width, int height)
 		return false;
 	}
 
-	if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
-		std::cerr << "IMG_Init Error: " << IMG_GetError() << std::endl;
-		return false;
-	}
+	//if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
+	//	std::cerr << "IMG_Init Error: " << IMG_GetError() << std::endl;
+	//	return false;
+	//}
 
-	tileMap = new TileMap(32, 32, 26, 20);
+	/*tileMap = new TileMap(32, 32, 26, 20);
 	if (!tileMap->LoadTileSet("../../../resource/full_tilemap.png", renderer))
 	{
 		return false;
-	}
+	}*/
 
 	//타일맵 설정
-	for (int y = 0; y < 20; ++y)
-	{
-		for (int x = 0; x < 26; ++x)
-		{
-			tileMap->SetTile(x, y, (x + y) % 4); //타일 id 설정
-		}
-	}
+	//for (int y = 0; y < 20; ++y)
+	//{
+	//	for (int x = 0; x < 26; ++x)
+	//	{
+	//		tileMap->SetTile(x, y, (x + y) % 4); //타일 id 설정
+	//	}
+	//}
 	// 애니메이션 생성
 	/*if (!LoadTexture("../../../resource/StupidRat.png")) {
 		return false;
@@ -100,11 +104,11 @@ void GameEngine::Shutdown()
 	//	SDL_DestroyTexture(texture);
 	//	texture = nullptr;
 	//}
-	if (tileMap)
-	{
-		delete tileMap;
-		tileMap = nullptr;
-	}
+	//if (tileMap)
+	//{
+	//	delete tileMap;
+	//	tileMap = nullptr;
+	//}
 	if (renderer)
 	{
 		SDL_DestroyRenderer(renderer);
@@ -115,7 +119,7 @@ void GameEngine::Shutdown()
 		SDL_DestroyWindow(window);
 		window = nullptr;
 	}
-	IMG_Quit();
+	//IMG_Quit();
 	SDL_Quit();
 }
 
@@ -135,7 +139,19 @@ void GameEngine::HandleEvents()
 			case SDLK_ESCAPE:
 				isRunning = false;
 				break;
-				//추가 입력처리 할 것
+			// 플레이어 이동 처리
+			case SDLK_UP:
+				player.y -= 5;
+				break;
+			case SDLK_DOWN:
+				player.y += 5;
+				break;
+			case SDLK_LEFT:
+				player.x -= 5;
+				break;
+			case SDLK_RIGHT:
+				player.x += 5;
+				break;
 			default:
 				break;
 			}
@@ -145,6 +161,10 @@ void GameEngine::HandleEvents()
 
 void GameEngine::Update()
 {
+	// 충돌 감지 및 처리
+	if (CheckAABBCollision(player, obstacle)) {
+		std::cout << "Collision detected!" << std::endl;
+	}
 	//animation->Update();
 }
 
@@ -154,10 +174,18 @@ void GameEngine::Render()
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 	SDL_RenderClear(renderer);
 
+	// 플레이어 렌더링
+	SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+	SDL_RenderFillRect(renderer, &player);
+
+	// 장애물 렌더링
+	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+	SDL_RenderFillRect(renderer, &obstacle);
+
 	// 텍스처 렌더링
 	//animation->Render(renderer, texture, 200, 150);
 	//타일 렌더링
-	tileMap->Render(renderer);
+	//tileMap->Render(renderer);
 	//랜더링 결과를 화면에 출력
 	SDL_RenderPresent(renderer);
 }

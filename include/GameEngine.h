@@ -10,6 +10,7 @@
 #include <SDL_image.h>
 #include "Animation.h"
 #include "TileMap.h"
+#include "Physics.h"
 
 class GameEngine {
 public:
@@ -22,9 +23,12 @@ public:
 private:
 	SDL_Window*		window;
 	SDL_Renderer*	renderer;
+	SDL_Rect		player;
+	SDL_Rect		obstacle;
 	//SDL_Texture*	texture;
 	//Animation*	animation;
-	TileMap*		tileMap;
+	//TileMap*		tileMap;
+
 	bool			isRunning;
 	Uint32			frameStart;
 	int				frameTime;
